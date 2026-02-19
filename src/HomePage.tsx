@@ -52,9 +52,8 @@ const HomePage: React.FC = () => {
 
         <div className="top-toggle">
           <button
-            className={`toggle-tab ${
-              mode === 'user' ? 'toggle-tab-active' : ''
-            }`}
+            className={`toggle-tab ${mode === 'user' ? 'toggle-tab-active' : ''
+              }`}
             onClick={() => setMode('user')}
           >
             Rides
