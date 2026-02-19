@@ -59,8 +59,9 @@ const HomePage: React.FC = () => {
             Rides
           </button>
           <button
-            className={`toggle-tab ${mode === 'Driver' ? 'toggle-tab-active' : ''
-              }`}
+            className={`toggle-tab ${
+              mode == 'Driver' ? 'toggle-tab-active' : ''
+            }`}
             onClick={() => setMode('Driver')}
           >
             Driver
