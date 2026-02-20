@@ -18,14 +18,14 @@ type Trip = {
 // this would come from the API. Sliced by numberPassengers.
 const ALL_MOCK_PASSENGERS = [
   { id: 1, name: 'Emma Thompson', rating: 4.8, pickupLocation: 'Claverton Down Rd', cost: '£8.40',  rated: false },
-  { id: 2, name: 'Daniel Carter',  rating: 4.6, pickupLocation: 'North Rd',          cost: '£6.90',  rated: true  },
+  { id: 2, name: 'Daniel Carter',  rating: 4.6, pickupLocation: 'North Rd',          cost: '£6.90',  rated: true, triprated: 5  },
   { id: 3, name: 'Sophie Patel',   rating: 4.9, pickupLocation: 'Widcombe Hill',      cost: '£12.75', rated: false },
   { id: 4, name: 'James Wilson',   rating: undefined, pickupLocation: 'Bathwick St',  cost: '£5.60',  rated: false },
 ];
 const getMockPassengers = (n: number) =>
   ALL_MOCK_PASSENGERS.slice(0, Math.min(n, ALL_MOCK_PASSENGERS.length));
 
-// ─── Trip data (for testing frontend) ────────────────────────────────────────────────────────────────
+// ─── Trip data (for testing frontend, replaced by) ────────────────────────────────────────────────────────────────
 const upcomingTripsDriver: Trip[] = [
   { id: 1, title: 'University of Bath', meta: '23 Nov · 09:00', action: 'More', status: 'upcomingDriver', numberPassengers: 3 },
 ];
@@ -44,12 +44,12 @@ const passengerRequestedTrips: Trip[] = [
   { id: 5, username: 'Aisha Rahman',   rating: 4.7, meta: 'Today · 16:00', price: '£15.20', action: 'More', status: 'passengerRequest', title: 'Keynsham' },
 ];
 const pastTripsDrivers: Trip[] = [
-  { id: 1, title: 'Second Bridge',         meta: '21 Nov · 00:17', price: '£6.60',  rating: 4.5, action: 'More', status: 'pastDriver', numberPassengers: 2 },
-  { id: 2, title: 'University of Bath',    meta: '13 Nov · 22:03', price: '£7.63',  rating: 4.5, action: 'More', status: 'pastDriver', numberPassengers: 1 },
-  { id: 3, title: 'University of Bath',    meta: '31 Oct · 03:11', price: '£11.66', rating: 4.5, action: 'More', status: 'pastDriver', numberPassengers: 3 },
-  { id: 4, title: 'University of Bath',    meta: '21 Oct · 03:25', price: '£10.14', rating: 4.5, action: 'More', status: 'pastDriver', numberPassengers: 2 },
-  { id: 5, title: 'University of Bath',    meta: '17 Oct · 03:05', price: '£10.99', rating: 4.5, action: 'More', status: 'pastDriver', numberPassengers: 1 },
-  { id: 6, title: 'Bristol Airport (BRS)', meta: '14 Oct · 17:19', price: '£42.05', rating: 4.5, action: 'More', status: 'pastDriver', numberPassengers: 4 },
+  { id: 1, title: 'Second Bridge',         meta: '21 Nov · 00:17', price: '£6.60', action: 'More', status: 'pastDriver', numberPassengers: 2 },
+  { id: 2, title: 'University of Bath',    meta: '13 Nov · 22:03', price: '£7.63', action: 'More', status: 'pastDriver', numberPassengers: 1 },
+  { id: 3, title: 'University of Bath',    meta: '31 Oct · 03:11', price: '£11.66', action: 'More', status: 'pastDriver', numberPassengers: 3 },
+  { id: 4, title: 'University of Bath',    meta: '21 Oct · 03:25', price: '£10.14', action: 'More', status: 'pastDriver', numberPassengers: 2 },
+  { id: 5, title: 'University of Bath',    meta: '17 Oct · 03:05', price: '£10.99', action: 'More', status: 'pastDriver', numberPassengers: 1 },
+  { id: 6, title: 'Bristol Airport (BRS)', meta: '14 Oct · 17:19', price: '£42.05', action: 'More', status: 'pastDriver', numberPassengers: 4 },
 ];
 const pastTripsUsers: Trip[] = [
   { id: 1, title: 'Second Bridge',      meta: '21 Nov · 00:17', price: '£6.60',  rating: 4.5,       action: 'More', status: 'pastUser', drivername: 'Sarah Chen' },
@@ -69,6 +69,109 @@ const Icons = {
   back:    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>,
 };
 
+// ─── Rating Modal ─────────────────────────────────────────────────────────────
+type RatingTarget = {
+  name: string;
+  role: 'driver' | 'passenger';
+};
+
+const RATING_LABELS: Record<number, string> = {
+  1: 'Poor',
+  2: 'Fair',
+  3: 'Good',
+  4: 'Great',
+  5: 'Excellent',
+};
+
+const RatingModal: React.FC<{
+  target: RatingTarget;
+  onSubmit: (rating: number) => void;
+  onClose: () => void;
+}> = ({ target, onSubmit, onClose }) => {
+  const [hovered, setHovered] = useState(0);
+  const [selected, setSelected] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+
+  const display = hovered || selected;
+
+  const handleSubmit = () => {
+    if (!selected) return;
+    setSubmitted(true);
+    setTimeout(() => {
+      onSubmit(selected);
+    }, 1200);
+  };
+
+  return (
+    <>
+      <div className="rating-modal-overlay" onClick={!submitted ? onClose : undefined}/>
+      <div className={`rating-modal${submitted ? ' rating-modal-submitted' : ''}`}>
+        {submitted ? (
+          <div className="rating-success">
+            <div className="rating-success-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="9 12 11 14 15 10"/>
+              </svg>
+            </div>
+            <div className="rating-success-title">Rating Submitted!</div>
+            <div className="rating-success-sub">Thanks for your feedback</div>
+          </div>
+        ) : (
+          <>
+            <div className="rating-modal-handle-area">
+              <div className="sheet-handle"/>
+            </div>
+            <div className="rating-modal-content">
+              <div className="rating-avatar">{target.name[0]}</div>
+              <div className="rating-title">How was your trip?</div>
+              <div className="rating-subtitle">
+                Rate your {target.role === 'driver' ? 'driver' : 'passenger'},{' '}
+                <span className="rating-name">{target.name}</span>
+              </div>
+
+              <div className="rating-stars">
+                {[1, 2, 3, 4, 5].map(n => (
+                  <button
+                    key={n}
+                    className={`rating-star${n <= display ? ' rating-star-filled' : ''}`}
+                    onMouseEnter={() => setHovered(n)}
+                    onMouseLeave={() => setHovered(0)}
+                    onClick={() => setSelected(n)}
+                    aria-label={`${n} star`}
+                  >
+                    <svg width="40" height="40" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                      fill={n <= display ? '#fbbf24' : 'none'}
+                      stroke={n <= display ? '#fbbf24' : 'rgba(255,255,255,0.25)'}
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  </button>
+                ))}
+              </div>
+
+              <div className={`rating-label${display ? ' rating-label-visible' : ''}`}>
+                {display ? RATING_LABELS[display] : '‎'}
+              </div>
+
+              <div className="rating-modal-actions">
+                <button className="rating-btn-cancel" onClick={onClose}>Cancel</button>
+                <button
+                  className={`rating-btn-submit${selected ? ' rating-btn-submit-active' : ''}`}
+                  onClick={handleSubmit}
+                  disabled={!selected}
+                >
+                  Submit Rating
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
 // ─── Small reusable bits ──────────────────────────────────────────────────────
 const DetailRow: React.FC<{ label: string; value: React.ReactNode; valueClass?: string }> = ({ label, value, valueClass }) => (
   <div className="sheet-detail-row">
@@ -77,8 +180,9 @@ const DetailRow: React.FC<{ label: string; value: React.ReactNode; valueClass?: 
   </div>
 );
 
-const Btn: React.FC<{ cls: string; icon: React.ReactNode; label: string; small?: boolean }> = ({ cls, icon, label, small }) => (
-  <button className={`sheet-action-btn ${cls}${small ? ' btn-small' : ''}`}>
+// onClick added so Rate buttons can trigger the modal
+const Btn: React.FC<{ cls: string; icon: React.ReactNode; label: string; small?: boolean; onClick?: () => void }> = ({ cls, icon, label, small, onClick }) => (
+  <button className={`sheet-action-btn ${cls}${small ? ' btn-small' : ''}`} onClick={onClick}>
     {icon}{label}
   </button>
 );
@@ -120,7 +224,11 @@ const MapPlaceholder: React.FC = () => (
 // ─── Passenger Carousel ───────────────────────────────────────────────────────
 type Passenger = typeof ALL_MOCK_PASSENGERS[number];
 
-const PassengerCarousel: React.FC<{ passengers: Passenger[]; isPast: boolean }> = ({ passengers, isPast }) => {
+const PassengerCarousel: React.FC<{
+  passengers: Passenger[];
+  isPast: boolean;
+  onRatePassenger?: (p: Passenger) => void;
+}> = ({ passengers, isPast, onRatePassenger }) => {
   const [idx, setIdx] = useState(0);
   const p = passengers[idx];
   const total = passengers.length;
@@ -160,6 +268,9 @@ const PassengerCarousel: React.FC<{ passengers: Passenger[]; isPast: boolean }> 
         <div className="sheet-details-card passenger-details">
           <DetailRow label="Pick Up" value={p.pickupLocation}/>
           <DetailRow label="Cost"    value={p.cost} valueClass="detail-price"/>
+          {isPast && p.rated && (
+            <DetailRow label="Trip Rating" value={`⭐ ${p.triprated}`} valueClass="passenger-rating"/>
+          )}
         </div>
 
         {/* Per-passenger actions */}
@@ -167,26 +278,21 @@ const PassengerCarousel: React.FC<{ passengers: Passenger[]; isPast: boolean }> 
           <Btn cls="btn-message" icon={Icons.message} label="Message" small/>
           {isPast ? (
             <>
-              {!p.rated && <Btn cls="btn-rate"   icon={Icons.star}   label="Rate"   small/>}
+              {!p.rated && (
+                <Btn
+                  cls="btn-rate"
+                  icon={Icons.star}
+                  label="Rate"
+                  small
+                  onClick={() => onRatePassenger?.(p)}
+                />
+              )}
               <Btn cls="btn-report" icon={Icons.report} label="Report" small/>
             </>
           ) : (
             <Btn cls="btn-cancel" icon={Icons.remove} label="Remove" small/>
           )}
         </div>
-
-        {/* Dot + arrow nav */}
-        {total > 1 && (
-          <div className="carousel-nav">
-            <button className="carousel-arrow" onClick={() => setIdx(i => Math.max(0, i - 1))} disabled={idx === 0}>‹</button>
-            <div className="carousel-dots">
-              {passengers.map((_, i) => (
-                <button key={i} className={`carousel-dot${i === idx ? ' carousel-dot-active' : ''}`} onClick={() => setIdx(i)}/>
-              ))}
-            </div>
-            <button className="carousel-arrow" onClick={() => setIdx(i => Math.min(total - 1, i + 1))} disabled={idx === total - 1}>›</button>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -195,6 +301,7 @@ const PassengerCarousel: React.FC<{ passengers: Passenger[]; isPast: boolean }> 
 // ─── Trip Details Panel ───────────────────────────────────────────────────────
 const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose: () => void }> = ({ trip, mode, onClose }) => {
   const [closing, setClosing] = useState(false);
+  const [ratingTarget, setRatingTarget] = useState<RatingTarget | null>(null);
   const touchStartY = useRef<number | null>(null);
 
   const close = () => { setClosing(true); setTimeout(onClose, 320); };
@@ -207,6 +314,12 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
 
   const passengers = getMockPassengers(trip.numberPassengers ?? 1);
 
+  const handleRatingSubmit = (rating: number) => {
+    console.log(`Rated ${ratingTarget?.name}: ${rating} stars`);
+    setRatingTarget(null);
+    close();
+  };
+
   const renderBody = () => {
     switch (trip.status) {
 
@@ -218,7 +331,8 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
             <div className="sheet-details-card">
               <DetailRow label="Driver"      value={trip.drivername ?? 'Pending'}/>
               <DetailRow label="Destination" value={trip.title ?? '—'}/>
-              <DetailRow label="Date & Time" value={trip.meta ?? '—'}/>
+              <DetailRow label="Date & Arrival" value={trip.meta ?? '—'}/>
+              <DetailRow label="Estimated leave" value="Pending"/>
               <DetailRow label="Cost"        value={trip.price ?? '—'} valueClass="detail-price"/>
             </div>
             <div className="sheet-actions">
@@ -255,7 +369,7 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
               <DetailRow label="Driver"       value={trip.drivername ?? '—'}/>
               <DetailRow label="Destination"  value={trip.title ?? '—'}/>
               <DetailRow label="Pick Up Time" value={trip.meta ?? '—'}/>
-              <DetailRow label="Arrival Time" value="~09:45"/>
+              <DetailRow label="Arrival Time" value="09:45"/>
               <DetailRow label="Cost"         value={trip.price ?? '—'} valueClass="detail-price"/>
               {trip.rating !== undefined && (
                 <DetailRow label="Your Rating" value={`⭐ ${trip.rating}`}/>
@@ -264,7 +378,15 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
             <div className="sheet-actions">
               <Btn cls="btn-message" icon={Icons.message} label="Message Driver"/>
               {trip.rating === undefined && (
-                <Btn cls="btn-rate" icon={Icons.star} label="Rate Trip"/>
+                <Btn
+                  cls="btn-rate"
+                  icon={Icons.star}
+                  label="Rate Trip"
+                  onClick={() => setRatingTarget({
+                    name: trip.drivername ?? 'Your Driver',
+                    role: 'driver',
+                  })}
+                />
               )}
               <Btn cls="btn-report" icon={Icons.report} label="Report Issue"/>
             </div>
@@ -326,7 +448,11 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
             <div className="passenger-section-label">
               Passengers <span className="passenger-count-badge">{passengers.length}</span>
             </div>
-            <PassengerCarousel passengers={passengers} isPast={true}/>
+            <PassengerCarousel
+              passengers={passengers}
+              isPast={true}
+              onRatePassenger={(p) => setRatingTarget({ name: p.name, role: 'passenger' })}
+            />
           </>
         );
 
@@ -356,6 +482,15 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
           <div style={{ height: 32 }}/>
         </div>
       </div>
+
+      {/* Rating modal rendered above the trip sheet */}
+      {ratingTarget && (
+        <RatingModal
+          target={ratingTarget}
+          onSubmit={handleRatingSubmit}
+          onClose={() => setRatingTarget(null)}
+        />
+      )}
     </>
   );
 };
