@@ -6,8 +6,9 @@ import LoginPage from './LoginPage';
 import ActivityPage from './ActivityPage';
 import RequestRidePage from './RequestRidePage';
 import PostRidePage from './PostRidePage';
+import JourneyPage from './JourneyPage';
 
-type Tab = 'home' | 'services' | 'activity' | 'account' | 'request' | 'post';
+type Tab = 'home' | 'journey' | 'activity' | 'account' | 'request' | 'post';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -30,12 +31,9 @@ const App: React.FC = () => {
         return <PostRidePage />; // Render the post page
       case 'account':
         return <AccountPage />;
-      case 'services':
+      case 'journey':
         // placeholder screen for now
-        return <HomePage
-                 onRequestRide={() => setActiveTab('request')}
-                 onPostRide={() => setActiveTab('post')}
-               />;
+        return <JourneyPage />;
       case 'activity':
         return <ActivityPage />;
       default:
@@ -70,9 +68,9 @@ const App: React.FC = () => {
 
           <button
             className={`nav-item ${
-              activeTab === 'services' ? 'nav-item-active' : ''
+              activeTab === 'journey' ? 'nav-item-active' : ''
             }`}
-            onClick={() => setActiveTab('services')}
+            onClick={() => setActiveTab('journey')}
           >
             <div className="nav-icon">🗺️</div>
             <div className="nav-label">Journey</div>

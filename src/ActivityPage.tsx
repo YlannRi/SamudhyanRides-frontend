@@ -15,7 +15,9 @@ type Trip = {
   numberPassengers?: number;
   rating?: number;
   action: 'More';
-  status?: 'upcomingDriver' | 'upcomingUser' | 'requested' | 'pastUser' | 'passengerRequest' | 'pastDriver';
+  status?: 'upcomingDriver' | 'upcomingUser' | 'requested' | 'pastUser' | 'passengerRequest' | 'pastDriver' | 'activeUser' | 'activeDriver';
+  numberplate?: string;
+  model?: string;
 };
 
 
@@ -491,7 +493,7 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
   const renderBody = () => {
     switch (trip.status) {
 
-      /* ── Upcoming User ─────────────────────────────────────────────────── */
+      /* Upcoming User */
       case 'upcomingUser':
         return (
           <>
@@ -513,7 +515,7 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
           </>
         );
 
-      /* ── Requested ─────────────────────────────────────────────────────── */
+      /* Requested  */
       case 'requested':
         return (
           <>
@@ -534,11 +536,10 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
           </>
         );
 
-      /* ── Past User ─────────────────────────────────────────────────────── */
+      /* Past User */
       case 'pastUser':
         return (
           <>
-            {/* <RouteRow destination={trip.destination ?? 'Destination'}/> */}
             <div className="sheet-details-card">
               <DetailRow label="Driver"       value={trip.drivername ?? '—'}/>
               <DetailRow label="Destination"  value={trip.destination ?? '—'}/>
@@ -562,11 +563,10 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
           </>
         );
 
-      /* ── Upcoming Driver ───────────────────────────────────────────────── */
+      /* Upcoming Driver */
       case 'upcomingDriver':
         return (
           <>
-            {/* <RouteRow destination={trip.destination ?? 'Destination'}/> */}
             <div className="sheet-details-card">
               <DetailRow label="Destination"  value={trip.destination ?? '—'}/>
               <DetailRow label="Departure"    value={trip.time ?? '—'}/>
@@ -589,11 +589,10 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
           </>
         );
 
-      /* ── Passenger Request ─────────────────────────────────────────────── */
+      /* Passenger Request */
       case 'passengerRequest':
         return (
           <>
-            {/* <RouteRow destination={trip.destination ?? 'Destination'}/> */}
             <div className="sheet-details-card">
               <DetailRow label="Passenger"   value={trip.username ?? '—'}/>
               {trip.rating !== undefined && (
@@ -613,11 +612,10 @@ const TripDetailsPanel: React.FC<{ trip: Trip; mode: 'user' | 'Driver'; onClose:
           </>
         );
 
-      /* ── Past Driver ───────────────────────────────────────────────────── */
+      /* Past Driver */
       case 'pastDriver':
         return (
           <>
-            {/* <RouteRow destination={trip.destination ?? 'Destination'}/> */}
             <div className="sheet-details-card">
               <DetailRow label="Destination" value={trip.destination ?? '—'}/>
               <DetailRow label="Departure"   value={trip.time ?? '—'}/>
