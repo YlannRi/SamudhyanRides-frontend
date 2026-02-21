@@ -11,7 +11,7 @@ import JourneyPage from './JourneyPage';
 type Tab = 'home' | 'journey' | 'activity' | 'account' | 'request' | 'post';
 
 // Map Placeholder
-export const MapPlaceholder: React.FC = () => (
+export const MapPlaceholder: React.FC<{ label?: string }> = ({ label = 'Map Preview' }) => (
   <div className="map-placeholder">
     <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" className="map-svg">
       <rect width="400" height="220" fill="#e8ead6"/>
@@ -26,19 +26,10 @@ export const MapPlaceholder: React.FC = () => (
       <text x="60" y="195" fontSize="10" fill="#166534" fontWeight="bold">Pick Up</text>
       <text x="290" y="48" fontSize="10" fill="#991b1b" fontWeight="bold">Drop Off</text>
     </svg>
-    <div className="map-badge">Map Preview</div>
+    <div className="map-badge">{label}</div>
   </div>
 );
 
-// for section under map where it shows info about the trip or user
-export const DetailRow: React.FC<{ label: string; value: React.ReactNode; valueClass?: string }> = ({ label, value, valueClass }) => (
-  <div className="sheet-detail-row">
-    <span className="detail-label">{label}</span>
-    <span className={`detail-value ${valueClass ?? ''}`}>{value}</span>
-  </div>
-);
-
-// ─── SVG Icons ────────────────────────────────────────────────────────────────
 export const Icons = {
   message: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
   cancel:  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>,
@@ -47,10 +38,19 @@ export const Icons = {
   accept:  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
   remove:  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>,
   back:    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>,
+  clock: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  check: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+  pin:   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+  next:  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
 };
 
+export const DetailRow: React.FC<{ label: string; value: React.ReactNode; valueClass?: string }> = ({ label, value, valueClass }) => (
+  <div className="sheet-detail-row">
+    <span className="detail-label">{label}</span>
+    <span className={`detail-value ${valueClass ?? ''}`}>{value}</span>
+  </div>
+);
 
-// buttons for message, report etc
 export const Btn: React.FC<{ cls: string; icon: React.ReactNode; label: string; small?: boolean; onClick?: () => void }> = ({ cls, icon, label, small, onClick }) => (
   <button className={`sheet-action-btn ${cls}${small ? ' btn-small' : ''}`} onClick={onClick}>
     {icon}{label}
