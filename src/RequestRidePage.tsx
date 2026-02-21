@@ -1,3 +1,5 @@
+//Fixed making the buttons look like activity page using Ylann's css in App.css
+
 import React, { useState } from 'react';
 
 // Mock data for available rides
@@ -62,52 +64,41 @@ const RequestRidePage: React.FC = () => {
       {hasSearched && (
         <div className="search-results" style={{ marginTop: '30px' }}>
           <h3 style={{ marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
-            Available Rides
+            Available Rides -- Filter 
           </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          {/* this is how you make the buttons like on the activity page (accesses App.css)*/ }
+          <div className="past-list">
             {AVAILABLE_RIDES.map((ride) => (
-              <div
-                key={ride.id}
-                style={{
-                  padding: '15px',
-                  borderRadius: '12px',
-                  border: '1px solid #eaeaea',
-                  backgroundColor: 'rgba(255,255,255,0.25)',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <div style={{ fontWeight: 'bold', color: '#2c2828', fontSize: '16px' }}>{ride.destination}</div>
-                  <div style={{ fontWeight: 'bold', color: '#22c55e', fontSize: '16px' }}>{ride.price}</div>
-                </div>
-
-                <div style={{ fontSize: '14px', color: '#555', marginBottom: '4px' }}>
-                  🚗 {ride.driver} <span style={{ color: '#fbbf24' }}>⭐ {ride.rating}</span>
-                </div>
-
-                <div style={{ fontSize: '14px', color: '#555', marginBottom: '4px' }}>
-                  🕒 Arrives by {ride.time} <span>👥 {ride.seats} seats left</span>
+              <div key={ride.id} className="card trip-row-card">
+                <div className="trip-row-left">
+                  <div className="trip-car-icon">🚗</div>
+                  <div className="trip-row-text">
+                    <div className="trip-row-title">
+                      {ride.destination}
+                    </div>
+                    <div className="trip-row-meta">
+                      {ride.driver}
+                      <span className="trip-row-rating"> ⭐ {ride.rating}</span>
+                    </div>
+                    <div className="trip-row-meta">
+                      Arrives by {ride.time} • {ride.seats} seats left
+                    </div>
+                    <div className="trip-row-price">
+                      {ride.price}
+                    </div>
+                  </div>
                 </div>
 
                 <button
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    backgroundColor: '#e5e5e5',
-                    color: '#000',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
+                  className="pill pill-solid trip-row-button"
                   onClick={() => alert(`Requested a seat with ${ride.driver}!`)}
                 >
-                  Request Seat
+                  Request
                 </button>
               </div>
             ))}
           </div>
+          {/* Up until here, this can be copy and pasted*/}
         </div>
       )}
     </div>
