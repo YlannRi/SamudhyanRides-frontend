@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 type QuickActionCardProps = {
   emoji: string;
@@ -43,6 +43,41 @@ type AccountPageProps = {
 };
 
 const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
+  const [userName, setUserName] = useState<string>('Loading...');
+
+  // Fetch the profile data when the page loads
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+
+      try {
+        const response = await fetch('http://localhost:8000/account/users/users/me', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Supabase returns an array for select() queries
+          if (data && data.length > 0) {
+            const profile = data[0];
+            const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
+            setUserName(fullName || profile.university_username || 'University Student');
+          }
+        } else {
+          setUserName('Unknown User');
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setUserName('Unknown User');
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleLogoutClick = async () => {
     const token = localStorage.getItem('authToken');
@@ -55,14 +90,11 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
             'Authorization': `Bearer ${token}`
           }
         });
-        // We don't necessarily need to await a JSON response for a logout,
-        // as long as the request was sent successfully to invalidate the session.
       } catch (error) {
         console.error("Error communicating with logout endpoint:", error);
       }
     }
 
-    // Always log the user out on the frontend side, even if the backend call fails
     onLogout();
   };
 
@@ -70,7 +102,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ onLogout }) => {
     <>
       <header className="account-header">
         <div>
-          <div className="account-name">Ylann Rimbon</div>
+          <div className="account-name">{userName}</div>
           <div className="rating-badge">★ 4.33</div>
         </div>
       </header>
