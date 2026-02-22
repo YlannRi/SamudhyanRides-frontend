@@ -70,7 +70,7 @@ const RequestRidePage: React.FC = () => {
   return (
     <div style={{ width: '100%' }}>
       <header className="uber-header">
-        <h1 className="activity-title">Find a Ride</h1>
+        <h1 className="activity-title">Requst a Ride</h1>
       </header>
 
       {/* --- Search Form Area --- */}
