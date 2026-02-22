@@ -44,12 +44,11 @@ const AccountPage: React.FC = () => {
           <div className="account-name">Ylann Rimbon</div>
           <div className="rating-badge">★ 4.33</div>
         </div>
-        <div className="account-avatar" />
       </header>
 
       <div className="quick-actions-grid">
         <QuickActionCard emoji="⚙" label="Help" />
-        <QuickActionCard emoji="💳" label="Wallet" />
+        <QuickActionCard emoji="➜" label="Logout" />
         <QuickActionCard emoji="🛡" label="Safety" />
         <QuickActionCard emoji="✉" label="Inbox" hasDot />
       </div>
@@ -58,12 +57,6 @@ const AccountPage: React.FC = () => {
         title="Your timetable"
         subtitle="See and manage your upcoming rides for uni."
         right={<span className="info-card-emoji">📅</span>}
-      />
-
-      <InfoCard
-        title="Earn by driving"
-        subtitle="Try SamudhyanRides for FREE"
-        right={<span className="info-card-emoji">🚕</span>}
       />
 
       <InfoCard
